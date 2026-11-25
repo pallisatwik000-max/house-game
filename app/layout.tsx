@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import VoiceDock from "@/components/VoiceDock";
 
 export const metadata: Metadata = {
   title: "90 Numbers House Game",
@@ -32,7 +33,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-screen font-sans antialiased">{children}</body>
+      <body className="min-h-screen font-sans antialiased">
+        {children}
+        <VoiceDock />
+      </body>
     </html>
   );
 }
