@@ -63,4 +63,32 @@ export default function Ticket({
         ))}
       </div>
 
-      <div className="mt-3 grid grid-cols-2
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        {BUTTONS.map((b) => {
+          const tried = ticket.claims.find((c) => c.category === b.key);
+          const takenByOther = !tried && wonCategories.includes(b.key);
+          const disabled = !canAct || busy || !!tried || takenByOther;
+
+          let text = b.label;
+          if (tried?.status === "valid") text = `${b.label} ✓`;
+          else if (tried) text = `${b.label} ✗`;
+          else if (takenByOther) text = `${b.label} (won)`;
+
+          return (
+            <button
+              key={b.key}
+              type="button"
+              disabled={disabled}
+              onClick={() => onClaim(ticket.id, b.key)}
+              className={`btn-ghost !px-2 !py-2 text-xs ${
+                b.key === "HOUSE_FULL" ? "col-span-2" : ""
+              } ${tried?.status === "valid" ? "!border-green-500 text-green-600" : ""}`}
+            >
+              {text}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
