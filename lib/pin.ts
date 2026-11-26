@@ -27,4 +27,7 @@ export function hashPin(pin: string, slug: string): string {
 
 // Constant-time PIN check
 export function verifyPin(pin: string, slug: string, storedHash: string): boolean {
-  const a = Buffer.from(hashP
+  const a = Buffer.from(hashPin(pin, slug), "hex");
+  const b = Buffer.from(storedHash, "hex");
+  return a.length === b.length && timingSafeEqual(a, b);
+}
