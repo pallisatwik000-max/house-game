@@ -20,3 +20,13 @@ export default function ThemeToggle() {
   }
 
   return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="btn-ghost !px-3 !py-2"
+      aria-label="Switch theme"
+    >
+      {dark ? "☀️ Light" : "🌙 Dark"}
+    </button>
+  );
+}
