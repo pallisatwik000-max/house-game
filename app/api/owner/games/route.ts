@@ -46,3 +46,37 @@ export async function GET() {
 
   const adminOf = new Map((admins ?? []).map((a) => [a.id, a]));
   const nameOf = new Map((players ?? []).map((p) => [p.id, p.name]));
+  const noOf = new Map((tickets ?? []).map((t) => [t.id, t.ticket_no]));
+
+  const list = (games ?? []).map((g) => {
+    const called = (g.called_numbers ?? []) as number[];
+    const admin = adminOf.get(g.admin_id);
+    return {
+      id: g.id,
+      name: g.name,
+      status: g.status,
+      admin_email: admin?.email ?? "Unknown",
+      admin_name: admin?.full_name ?? null,
+      player_count: (players ?? []).filter((p) => p.game_id === g.id).length,
+      called_count: called.length,
+      latest: called.length ? called[called.length - 1] : null,
+      started_at: g.started_at,
+      ended_at: g.ended_at,
+      created_at: g.created_at,
+      winners: (claims ?? [])
+        .filter((c) => c.game_id === g.id)
+        .map((c) => ({
+          category: c.category,
+          player_name: nameOf.get(c.player_id) ?? "Unknown",
+          ticket_no: noOf.get(c.ticket_id) ?? 0,
+          created_at: c.created_at,
+        })),
+    };
+  });
+
+  return NextResponse.json({
+    games: list,
+    live: list.filter((g) => g.status === "running" || g.status === "paused"),
+    history: list.filter((g) => g.status === "ended"),
+  });
+}
