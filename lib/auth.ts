@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { supabaseAdmin } from "./supabase-admin";
 
 export type Profile = {
@@ -32,6 +32,8 @@ export type Player = {
   session_token: string;
 };
 
+type CookieToSet = { name: string; value: string; options: CookieOptions };
+
 // Supabase client that reads the logged-in user from cookies (server only)
 export function supabaseServer() {
   const cookieStore = cookies();
@@ -43,7 +45,7 @@ export function supabaseServer() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(list) {
+        setAll(list: CookieToSet[]) {
           try {
             list.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
@@ -128,4 +130,4 @@ export async function requirePlayer(req: Request): Promise<PlayerResult> {
 
   const { games, ...player } = data as Player & { games: Game };
   return { player: player as Player, game: games };
-      }
+}
