@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
+
+type CookieToSet = { name: string; value: string; options: CookieOptions };
 
 // Protects /admin and /owner pages: not logged in = sent to /login.
 // (The API routes also check the role and approval on the server.)
@@ -14,7 +16,7 @@ export async function middleware(req: NextRequest) {
         getAll() {
           return req.cookies.getAll();
         },
-        setAll(list) {
+        setAll(list: CookieToSet[]) {
           list.forEach(({ name, value }) => req.cookies.set(name, value));
           res = NextResponse.next({ request: req });
           list.forEach(({ name, value, options }) =>
